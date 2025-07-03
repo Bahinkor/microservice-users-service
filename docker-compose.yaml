@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: users-service-db
+    restart: always
+    environment:
+      POSTGRES_DB: nest_microservice_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    networks:
+      - microservices_net
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  users-service:
+    build:
+      context: .
+    container_name: users-service
+    ports:
+      - 3001:3000
+    depends_on:
+      - postgres
+    networks:
+      - microservices_net
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+
+volumes:
+  postgres-data:
+
+networks:
+  microservices_net:
+    external: true
