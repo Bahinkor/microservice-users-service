@@ -18,10 +18,18 @@ export class PrismaUserRepository implements UserRepository {
     role: UserRole;
     password: string;
   }): Promise<User> {
-    const user = await this.prisma.user.create({ data });
+    const user = await this.prisma.user.create({
+      data: {
+        uid: data.uid,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: data.role,
+        password: data.password,
+      },
+    });
 
     return new User({
-      id: user.id,
       uid: user.uid,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -30,6 +38,7 @@ export class PrismaUserRepository implements UserRepository {
       password: user.password,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      id: user.id,
     });
   }
 }

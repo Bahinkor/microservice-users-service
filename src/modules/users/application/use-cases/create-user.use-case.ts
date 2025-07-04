@@ -22,7 +22,7 @@ export class CreateUserUseCase {
     const hashedPassword = await bcrypt.hash(password, 10);
     const normalizedEmail = email.trim().toLocaleLowerCase();
 
-    const userProps = {
+    const user = new User({
       uid,
       firstName,
       lastName,
@@ -30,8 +30,8 @@ export class CreateUserUseCase {
       role,
       password: hashedPassword,
       createdAt: now,
-    };
+    });
 
-    return this.userRepository.create(userProps);
+    return this.userRepository.create(user);
   }
 }

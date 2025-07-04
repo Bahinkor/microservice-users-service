@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { CreateUserUseCase } from './application/use-cases/create-user.use-case';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,10 +9,7 @@ export class UserController {
   constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
   @MessagePattern('user.created')
-  async createUser(@Payload() createUserDto: CreateUserDto, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
-
+  async createUser(@Payload() createUserDto: CreateUserDto) {
     console.log('[user.create] Received data:', createUserDto);
 
     const user = await this.createUserUseCase.execute(
@@ -22,8 +19,6 @@ export class UserController {
       createUserDto.role,
       createUserDto.password,
     );
-
-    channel.ack(originalMsg);
 
     console.log('user =>', user);
 
