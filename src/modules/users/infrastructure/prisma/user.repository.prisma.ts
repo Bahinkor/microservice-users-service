@@ -18,16 +18,18 @@ export class PrismaUserRepository implements UserRepository {
     role: UserRole;
     password: string;
   }): Promise<User> {
-    const user = await this.prisma.user.create({
-      data: {
-        uid: data.uid,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        role: data.role,
-        password: data.password,
-      },
-    });
+    const [user] = await this.prisma.$transaction([
+      this.prisma.user.create({
+        data: {
+          uid: data.uid,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          role: data.role,
+          password: data.password,
+        },
+      }),
+    ]);
 
     return new User({
       uid: user.uid,
