@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'node:crypto';
@@ -17,6 +17,12 @@ export class CreateUserUseCase {
     role: UserRole,
     password: string,
   ): Promise<User> {
+    const isExistingUser = await this.userRepository.findOneByEmail(email);
+
+    if (isExistingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
     const now = new Date();
     const id = randomUUID();
     const hashedPassword = await bcrypt.hash(password, 10);
