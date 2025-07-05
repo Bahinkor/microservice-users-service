@@ -8,5 +8,6 @@ export default defineConfig({
   rules: {
     'perfectionist/sort-classes': 'off',
     'import/no-cycle': 'off',
+    'max-params': 'off',
   },
 });
